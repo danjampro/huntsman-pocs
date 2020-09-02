@@ -10,18 +10,18 @@ from astropy import units as u
 
 from pocs.utils import error
 from pocs.utils import CountdownTimer
-from pocs.camera.zwo import Camera as ZWOCamera
+from pocs.camera.zwo import Camera as Camera
 from pocs.camera.libasi import ASIDriver
 
 
 DEFAULT_POLLING_INTERVAL = 0.01
 
 
-class Camera(ZWOCamera):
+class ModifiedCamera(Camera):
     """
 
     """
-    _driver = ZWOCamera._driver
+    _driver = Camera._driver
     _temp_image_filename = "/tmp/tempdata.fits"
 
     def __init__(self, polling_interval=DEFAULT_POLLING_INTERVAL, **kwargs):
