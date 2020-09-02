@@ -371,13 +371,13 @@ class Camera(AbstractSDKCamera):
 
     def _poll_exposure(self, readout_args):
         """Override to include `self._polling_interval`."""
-        timer = CountdownTimer(duration=self._timeout)
+        timer = CountdownTimer(timeout=10)
         try:
             while self.is_exposing:
                 if timer.expired():
                     msg = "Timeout waiting for exposure on {} to complete".format(self)
                     raise error.Timeout(msg)
-                time.sleep(self._polling_interval)  # <---------- This is the only difference
+                time.sleep(self._polling_interval)  # <---------- This is different
         except (RuntimeError, error.PanError) as err:
             # Error returned by driver at some point while polling
             self.logger.error('Error while waiting for exposure on {}: {}'.format(self, err))
