@@ -422,5 +422,11 @@ if __name__ == "__main__":
     # Create the camera
     camera = Camera(serial_number=serial_number, polling_interval=polling_interval)
 
+    # Enable cooling
+    camera.cooling_enabled = True
+    print("Waiting for camera cooling.")
+    time.sleep(120)
+
     # Take the exposure series
+    print("Starting exposures.")
     camera.take_exposure_series()
