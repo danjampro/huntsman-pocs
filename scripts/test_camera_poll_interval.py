@@ -434,4 +434,5 @@ if __name__ == "__main__":
 
     # Take the exposure series
     print("Starting exposures.")
-    camera.take_exposure_series()
+    camera.take_exposure_series(exposure_time=5*u.second)
+    print("Finished exposures.")
