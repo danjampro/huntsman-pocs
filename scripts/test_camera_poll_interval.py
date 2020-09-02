@@ -414,11 +414,13 @@ class Camera(AbstractSDKCamera):
             writer = csv.writer(f)
             writer.writerow([f"{self._polling_interval:0.3f}", f"{exp_num}"])
 
+        return exp_num
+
 
 if __name__ == "__main__":
 
-    # serial_number = "361d420013090900"  # Pi1
-    serial_number = "3528420013090900"  # Pi8
+    serial_number = "361d420013090900"  # Pi1
+    # serial_number = "3528420013090900"  # Pi8
     polling_interval = DEFAULT_POLLING_INTERVAL
 
     # Load the config
@@ -434,5 +436,5 @@ if __name__ == "__main__":
 
     # Take the exposure series
     print("Starting exposures.")
-    camera.take_exposure_series(exposure_time=5*u.second)
-    print("Finished exposures.")
+    n_exposures = camera.take_exposure_series(exposure_time=1*u.second)
+    print(f"Finished {n_exposures} exposures.")
