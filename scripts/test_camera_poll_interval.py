@@ -388,7 +388,7 @@ class Camera(AbstractSDKCamera):
         finally:
             self._exposure_event.set()  # Make sure this gets set regardless of readout errors
 
-    def take_exposure_series(self, max_exposures=100, exposure_time=1*u.second,
+    def take_exposure_series(self, max_exposures=1000, exposure_time=1*u.second,
                              filter_name="blank"):
         """
         Take a series of blocking exposues on the camera, each time deleting the resulting file. Do
@@ -408,6 +408,7 @@ class Camera(AbstractSDKCamera):
                 self.logger.info(f"Error on {self} after {exp_num} exposures with polling"
                                  f" interval={self._polling_interval}: {err}.")
                 break
+        print(f"Finished {n_exposures} exposures.")
 
         # Log the number of exposures before error
         with open(self._record_filename, "a") as f:
@@ -437,4 +438,3 @@ if __name__ == "__main__":
     # Take the exposure series
     print("Starting exposures.")
     n_exposures = camera.take_exposure_series(exposure_time=1*u.second)
-    print(f"Finished {n_exposures} exposures.")
