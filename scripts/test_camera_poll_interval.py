@@ -11,16 +11,17 @@ from astropy import units as u
 from pocs.utils import error
 from pocs.utils import CountdownTimer
 from pocs.camera.zwo import Camera
-from pocs.camera.sdk import AbstractSDKCamera
+from pocs.camera.libasi import ASIDriver
+
 
 DEFAULT_POLLING_INTERVAL = 0.01
 
 
-class ModifiedZwoCamera(Camera, AbstractSDKCamera):
+class ModifiedZwoCamera(Camera):
     """
 
     """
-    _driver = None  # Class variable to store the ASI driver interface
+    _driver = ASIDriver()  # Class variable to store the ASI driver interface
     _cameras = []  # Cache of camera string IDs
     _assigned_cameras = set()  # Camera string IDs already in use.
 
