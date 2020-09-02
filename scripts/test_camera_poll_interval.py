@@ -404,7 +404,7 @@ class Camera(AbstractSDKCamera):
                 self.take_exposure(filename=self._temp_image_filename, seconds=exposure_time,
                                    blocking=True)
                 os.remove(self._temp_image_filename)
-            except error.PanError as err:
+            except (error.PanError, FileNotFoundError) as err:
                 self.logger.info(f"Error on {self} after {exp_num} exposures with polling"
                                  f" interval={self._polling_interval}: {err}.")
                 break
