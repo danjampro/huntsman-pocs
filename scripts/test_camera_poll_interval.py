@@ -27,6 +27,7 @@ class Camera(AbstractSDKCamera):
     _driver = None  # Class variable to store the ASI driver interface
     _cameras = []  # Cache of camera string IDs
     _assigned_cameras = set()  # Camera string IDs already in use.
+    _temp_image_filename = "/tmp/polltest.fits"
 
     def __init__(self, name='ZWO ASI Camera', gain=None, image_type=None,
                  polling_interval=DEFAULT_POLLING_INTERVAL, *args, **kwargs):
