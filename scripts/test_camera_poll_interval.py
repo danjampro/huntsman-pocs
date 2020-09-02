@@ -11,18 +11,23 @@ from astropy import units as u
 from pocs.utils import error
 from pocs.utils import CountdownTimer
 from pocs.camera.zwo import Camera
+from pocs.camera.sdk import AbstractSDKCamera
 
 DEFAULT_POLLING_INTERVAL = 0.01
 
 
-class ModifiedZwoCamera(Camera):
+class ModifiedZwoCamera(Camera, AbstractSDKCamera):
     """
 
     """
+    _driver = None  # Class variable to store the ASI driver interface
+    _cameras = []  # Cache of camera string IDs
+    _assigned_cameras = set()  # Camera string IDs already in use.
+
     _temp_image_filename = "/tmp/tempdata.fits"
 
-    def __init__(self, polling_interval=DEFAULT_POLLING_INTERVAL, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, polling_interval=DEFAULT_POLLING_INTERVAL, **kwargs):
+        super().__init__(**kwargs)
         self._polling_interval = polling_interval
         # Save the record somewhere it's easily accessible outside of docker
         self._record_filename = os.path.join(self.config["directories"]["images"],
