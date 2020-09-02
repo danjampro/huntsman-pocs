@@ -18,7 +18,7 @@ from pocs.camera.sdk import AbstractSDKCamera
 from pocs.camera.libasi import ASIDriver
 from pocs.utils import get_quantity_value
 from pocs.utils.images import fits as fits_utils
-from huntsman.pocs.utils import load_config
+# from huntsman.pocs.utils import load_config
 
 DEFAULT_POLLING_INTERVAL = 0.01
 
@@ -52,7 +52,7 @@ class Camera(AbstractSDKCamera):
             its serial number or, if it doesn't have one, by the user set ID.
         """
         kwargs['readout_time'] = kwargs.get('readout_time', 0.1)
-        kwargs['timeout'] = kwargs.get('timeout', 10)
+        kwargs['timeout'] = kwargs.get('timeout', 0.5)
 
         self._video_event = threading.Event()
 
@@ -424,11 +424,9 @@ if __name__ == "__main__":
     # serial_number = "3528420013090900"  # Pi8
     polling_interval = DEFAULT_POLLING_INTERVAL
 
-    # Load the config
-    config = load_config()
-
     # Create the camera
-    camera = Camera(serial_number=serial_number, polling_interval=polling_interval, config=config)
+    camera = Camera(serial_number=serial_number, polling_interval=polling_interval,
+                    temperature_tolerance=1.5 * u.Celsius, timeout=10)
 
     # Enable cooling
     camera.cooling_enabled = True
