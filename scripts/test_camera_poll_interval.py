@@ -10,14 +10,14 @@ from astropy import units as u
 
 from pocs.utils import error
 from pocs.utils import CountdownTimer
-from pocs.camera.zwo import Camera
+from pocs.camera.zwo import Camera as ZWOCamera
 from pocs.camera.libasi import ASIDriver
 
 
 DEFAULT_POLLING_INTERVAL = 0.01
 
 
-class ModifiedZwoCamera(Camera):
+class Camera(ZWOCamera):
     """
 
     """
