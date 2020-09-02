@@ -86,7 +86,7 @@ if __name__ == "__main__":
     polling_interval = DEFAULT_POLLING_INTERVAL
 
     # Create the camera
-    camera = ModifiedZwoCamera(serial_number=serial_number, polling_interval=polling_interval)
+    camera = Camera(serial_number=serial_number, polling_interval=polling_interval)
 
     # Take the exposure series
     camera.take_exposure_series()
