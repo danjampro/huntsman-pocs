@@ -400,7 +400,7 @@ class Camera(AbstractSDKCamera):
         # Start the exposure series
         for exp_num in range(1, max_exposures+1):
             try:
-                self.take_exposure(filename=self._temp_image_filename, exposure_time=exposure_time,
+                self.take_exposure(filename=self._temp_image_filename, seconds=exposure_time,
                                    blocking=True)
                 os.remove(self._temp_image_filename)
             except error.PanError as err:
