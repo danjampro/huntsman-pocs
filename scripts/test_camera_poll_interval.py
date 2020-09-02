@@ -73,8 +73,7 @@ class Camera(AbstractSDKCamera):
 
         self._polling_interval = polling_interval       # <---------- This is the different
         # Save the record somewhere it's easily accessible outside of docker
-        self._record_filename = os.path.join(self.config["directories"]["images"],
-                                             f"polltest_{self._serial_number}.csv")
+        self._record_filename = f"/var/huntsman/logs/polltest_{self._serial_number}.csv"
 
         self.logger.info('{} initialised'.format(self))
 
