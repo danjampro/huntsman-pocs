@@ -408,7 +408,7 @@ class Camera(AbstractSDKCamera):
                 self.logger.info(f"Error on {self} after {exp_num} exposures with polling"
                                  f" interval={self._polling_interval}: {err}.")
                 break
-        print(f"Finished {n_exposures} exposures.")
+        print(f"Finished {exp_num} exposures.")
 
         # Log the number of exposures before error
         with open(self._record_filename, "a") as f:
