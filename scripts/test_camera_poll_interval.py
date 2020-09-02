@@ -433,7 +433,7 @@ if __name__ == "__main__":
     # Enable cooling
     camera.cooling_enabled = True
     print("Waiting for camera cooling.")
-    time.sleep(300)
+    time.sleep(420)
 
     # Take the exposure series
     print("Starting exposures.")
