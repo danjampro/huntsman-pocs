@@ -416,7 +416,8 @@ class Camera(AbstractSDKCamera):
 
 if __name__ == "__main__":
 
-    serial_number = "361d420013090900"  # Pi1
+    # serial_number = "361d420013090900"  # Pi1
+    serial_number = "370d420013090900"  # Pi6
     polling_interval = DEFAULT_POLLING_INTERVAL
 
     # Create the camera
