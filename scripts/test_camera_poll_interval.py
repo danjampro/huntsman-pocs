@@ -395,7 +395,7 @@ class Camera(AbstractSDKCamera):
         of exposures.
         """
         # Move the filterwheel
-        self.filterwheel.move_to(filter_name)
+        # self.filterwheel.move_to(filter_name)
 
         # Start the exposure series
         for exp_num in range(1, max_exposures+1):
