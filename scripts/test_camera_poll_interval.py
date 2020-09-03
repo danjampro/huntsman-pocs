@@ -371,6 +371,7 @@ class Camera(AbstractSDKCamera):
 
     def _poll_exposure(self, readout_args):
         """Override to include `self._polling_interval`."""
+        print("elloelloello")
         timer = CountdownTimer(duration=10)
         try:
             while self.is_exposing:
@@ -423,19 +424,22 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('polling_interval', type=float)
+    parser.add_argument('--polling_interval', type=float, default=DEFAULT_POLLING_INTERVAL)
     parser.add_argument('--serial_number', type=str, default="361d420013090900")
+    parser.add_argument('--exposure_time', type=float, default=1)
     args = parser.parse_args()
     polling_interval = args.polling_interval
     serial_number = args.serial_number
+    exposure_time = args.exposure_time * u.second
     print(f"Polling interval: {polling_interval}s.")
+    print(f"Exposure time: {exposure_time.value}s.")
 
     # serial_number = "3528420013090900"  # Pi8
     # polling_interval = DEFAULT_POLLING_INTERVAL
 
     # Create the camera
     camera = Camera(serial_number=serial_number, polling_interval=polling_interval,
-                    temperature_tolerance=1.5 * u.Celsius, timeout=10)
+                    temperature_tolerance=1.5 * u.Celsius, timeout=30)
 
     # Enable cooling
     camera.cooling_enabled = True
@@ -444,4 +448,4 @@ if __name__ == "__main__":
 
     # Take the exposure series
     print("Starting exposures.")
-    n_exposures = camera.take_exposure_series(exposure_time=1*u.second)
+    n_exposures = camera.take_exposure_series(exposure_time=exposure_time)
