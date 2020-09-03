@@ -418,6 +418,84 @@ class Camera(AbstractSDKCamera):
 
         return exp_num
 
+    def take_exposure(self,
+                      seconds=1.0 * u.second,
+                      filename=None,
+                      dark=False,
+                      blocking=False,
+                      *args,
+                      **kwargs):
+        """Take an exposure for given number of seconds and saves to provided filename.
+        Args:
+            seconds (u.second, optional): Length of exposure.
+            filename (str, optional): Image is saved to this filename.
+            dark (bool, optional): Exposure is a dark frame, default False. On cameras that support
+                taking dark frames internally (by not opening a mechanical shutter) this will be
+                done, for other cameras the light must be blocked by some other means. In either
+                case setting dark to True will cause the `IMAGETYP` FITS header keyword to have
+                value 'Dark Frame' instead of 'Light Frame'. Set dark to None to disable the
+                `IMAGETYP` keyword entirely.
+            blocking (bool, optional): If False (default) returns immediately after starting
+                the exposure, if True will block until it completes.
+        Returns:
+            threading.Event: Event that will be set when exposure is complete.
+        """
+        assert self.is_connected, self.logger.error("Camera must be connected for take_exposure!")
+
+        assert filename is not None, self.logger.error("Must pass filename for take_exposure")
+
+        # Check that the camera (and subcomponents) is ready
+        if not self.is_ready:
+            # Work out why the camera isn't ready.
+            current_readiness = self.readiness
+            problems = []
+            if not current_readiness.get('temperature_stable', True):
+                problems.append("unstable temperature")
+
+            for sub_name in self._subcomponent_names:
+                if not current_readiness.get(sub_name, True):
+                    problems.append(f"{sub_name} not ready")
+
+            if not current_readiness['not_exposing']:
+                problems.append("exposure in progress")
+
+            problems_string = ", ".join(problems)
+            msg = f"Attempt to start exposure on {self} while not ready: {problems_string}."
+            raise error.PanError(msg)
+
+        if not isinstance(seconds, u.Quantity):
+            seconds = seconds * u.second
+
+        self.logger.debug(f'Taking {seconds} exposure on {self.name}: {filename}')
+
+        header = self._create_fits_header(seconds, dark)
+
+        if not self._exposure_event.is_set():
+            msg = f"Attempt to take exposure on {self} while one already in progress."
+            raise error.PanError(msg)
+
+        # Clear event now to prevent any other exposures starting before this one is finished.
+        self._exposure_event.clear()
+
+        try:
+            # Camera type specific exposure set up and start
+            readout_args = self._start_exposure(seconds, filename, dark, header, *args, *kwargs)
+        except (RuntimeError, ValueError, error.PanError) as err:
+            self._exposure_event.set()
+            raise error.PanError("Error starting exposure on {}: {}".format(self, err))
+
+        # Start polling thread that will call camera type specific _readout method when done
+        readout_thread = threading.Timer(interval=get_quantity_value(seconds, unit=u.second)/2,
+                                         function=self._poll_exposure,
+                                         args=(readout_args,))
+        readout_thread.start()
+
+        if blocking:
+            self.logger.debug("Blocking on exposure event for {}".format(self))
+            self._exposure_event.wait()
+
+        return self._exposure_event
+
 
 if __name__ == "__main__":
 
