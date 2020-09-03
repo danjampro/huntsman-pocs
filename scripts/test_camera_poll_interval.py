@@ -18,7 +18,7 @@ from pocs.camera.sdk import AbstractSDKCamera
 from pocs.camera.libasi import ASIDriver
 from pocs.utils import get_quantity_value
 from pocs.utils.images import fits as fits_utils
-from huntsman.pocs.utils import load_device_config
+from huntsman.pocs.utils.config import load_device_config
 
 DEFAULT_POLLING_INTERVAL = 0.01
 
