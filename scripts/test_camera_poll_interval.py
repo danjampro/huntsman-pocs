@@ -371,8 +371,8 @@ class Camera(AbstractSDKCamera):
 
     def _poll_exposure(self, readout_args):
         """Override to include `self._polling_interval`."""
-        print("elloelloello")
-        timer = CountdownTimer(duration=10)
+        print(f"Polling camera with {self._polling_interval}s interval.")
+        timer = CountdownTimer(duration=self._timeout)
         try:
             while self.is_exposing:
                 if timer.expired():
