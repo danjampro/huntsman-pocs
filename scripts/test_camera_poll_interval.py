@@ -420,9 +420,17 @@ class Camera(AbstractSDKCamera):
 
 if __name__ == "__main__":
 
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('polling_interval', type=float)
+    args = parser.parse_args()
+    polling_interval = args.polling_interval
+    print(f"Polling interval: {polling_interval}s")
+
     serial_number = "361d420013090900"  # Pi1
     # serial_number = "3528420013090900"  # Pi8
-    polling_interval = DEFAULT_POLLING_INTERVAL
+    # polling_interval = DEFAULT_POLLING_INTERVAL
 
     # Create the camera
     camera = Camera(serial_number=serial_number, polling_interval=polling_interval,
@@ -431,7 +439,7 @@ if __name__ == "__main__":
     # Enable cooling
     camera.cooling_enabled = True
     print("Waiting for camera cooling.")
-    time.sleep(420)
+    time.sleep(240)
 
     # Take the exposure series
     print("Starting exposures.")
