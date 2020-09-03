@@ -424,11 +424,12 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('polling_interval', type=float)
+    parser.add_argument('--serial_number', type=str, default="361d420013090900")
     args = parser.parse_args()
     polling_interval = args.polling_interval
-    print(f"Polling interval: {polling_interval}s")
+    serial_number = args.serial_number
+    print(f"Polling interval: {polling_interval}s.")
 
-    serial_number = "361d420013090900"  # Pi1
     # serial_number = "3528420013090900"  # Pi8
     # polling_interval = DEFAULT_POLLING_INTERVAL
 
