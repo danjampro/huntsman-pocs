@@ -18,7 +18,7 @@ from pocs.camera.sdk import AbstractSDKCamera
 from pocs.camera.libasi import ASIDriver
 from pocs.utils import get_quantity_value
 from pocs.utils.images import fits as fits_utils
-# from huntsman.pocs.utils import load_config
+from huntsman.pocs.utils import load_device_config
 
 DEFAULT_POLLING_INTERVAL = 0.01
 
@@ -425,26 +425,28 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--polling_interval', type=float, default=DEFAULT_POLLING_INTERVAL)
-    parser.add_argument('--serial_number', type=str, default="361d420013090900")
     parser.add_argument('--exposure_time', type=float, default=1)
     args = parser.parse_args()
     polling_interval = args.polling_interval
-    serial_number = args.serial_number
     exposure_time = args.exposure_time * u.second
     print(f"Polling interval: {polling_interval}s.")
     print(f"Exposure time: {exposure_time.value}s.")
 
     # serial_number = "3528420013090900"  # Pi8
     # polling_interval = DEFAULT_POLLING_INTERVAL
+    config = load_device_config()
+    config["polling_interval"] = polling_interval
 
     # Create the camera
-    camera = Camera(serial_number=serial_number, polling_interval=polling_interval,
-                    temperature_tolerance=1.5 * u.Celsius, timeout=30)
+    camera = Camera(**config)
 
     # Enable cooling
     camera.cooling_enabled = True
     print("Waiting for camera cooling.")
     time.sleep(240)
+
+    # Move to blank filter
+    camera.filterwheel.move_to("blank", blocking=True)
 
     # Take the exposure series
     print("Starting exposures.")
