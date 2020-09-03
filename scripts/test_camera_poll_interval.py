@@ -434,7 +434,7 @@ if __name__ == "__main__":
 
     # serial_number = "3528420013090900"  # Pi8
     # polling_interval = DEFAULT_POLLING_INTERVAL
-    config = load_device_config()
+    config = load_device_config()["camera"]
     config["polling_interval"] = polling_interval
 
     # Create the camera
