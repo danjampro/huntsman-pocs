@@ -485,7 +485,7 @@ class Camera(AbstractSDKCamera):
             raise error.PanError("Error starting exposure on {}: {}".format(self, err))
 
         # Start polling thread that will call camera type specific _readout method when done
-        readout_thread = threading.Timer(interval=get_quantity_value(seconds, unit=u.second)/2,
+        readout_thread = threading.Timer(interval=get_quantity_value(seconds, unit=u.second)*2,
                                          function=self._poll_exposure,
                                          args=(readout_args,))
         readout_thread.start()
