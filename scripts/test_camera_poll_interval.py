@@ -504,6 +504,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--polling_interval', type=float, default=DEFAULT_POLLING_INTERVAL)
     parser.add_argument('--exposure_time', type=float, default=1)
+    parser.add_argument('--wait', type=float, default=240)
     args = parser.parse_args()
     polling_interval = args.polling_interval
     exposure_time = args.exposure_time * u.second
@@ -521,7 +522,7 @@ if __name__ == "__main__":
     # Enable cooling
     camera.cooling_enabled = True
     print("Waiting for camera cooling.")
-    time.sleep(240)
+    time.sleep(args.wait)
 
     # Move to blank filter
     camera.filterwheel.move_to("blank", blocking=True)
