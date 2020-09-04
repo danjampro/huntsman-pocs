@@ -446,6 +446,7 @@ class Camera(AbstractSDKCamera):
         self._driver.close_camera(self._handle)
         self._driver.open_camera(self._handle)
         self._driver.init_camera(self._handle)
+        self.cooling_enabled = True
 
         assert self.is_connected, self.logger.error("Camera must be connected for take_exposure!")
 
@@ -453,22 +454,7 @@ class Camera(AbstractSDKCamera):
 
         # Check that the camera (and subcomponents) is ready
         if not self.is_ready:
-            # Work out why the camera isn't ready.
-            current_readiness = self.readiness
-            problems = []
-            if not current_readiness.get('temperature_stable', True):
-                problems.append("unstable temperature")
-
-            for sub_name in self._subcomponent_names:
-                if not current_readiness.get(sub_name, True):
-                    problems.append(f"{sub_name} not ready")
-
-            if not current_readiness['not_exposing']:
-                problems.append("exposure in progress")
-
-            problems_string = ", ".join(problems)
-            msg = f"Attempt to start exposure on {self} while not ready: {problems_string}."
-            raise error.PanError(msg)
+            time.sleep(5)
 
         if not isinstance(seconds, u.Quantity):
             seconds = seconds * u.second
