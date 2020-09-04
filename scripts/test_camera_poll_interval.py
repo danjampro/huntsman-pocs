@@ -31,7 +31,7 @@ class Camera(AbstractSDKCamera):
     _temp_image_filename = "/tmp/polltest.fits"
 
     def __init__(self, name='ZWO ASI Camera', gain=None, image_type=None,
-                 polling_interval=DEFAULT_POLLING_INTERVAL, *args, **kwargs):
+                 polling_interval=DEFAULT_POLLING_INTERVAL, delay_factor=1, *args, **kwargs):
         """
         ZWO ASI Camera class
 
@@ -75,6 +75,7 @@ class Camera(AbstractSDKCamera):
         self._polling_interval = polling_interval       # <---------- This is the different
         # Save the record somewhere it's easily accessible outside of docker
         self._record_filename = f"/var/huntsman/logs/polltest_{self._serial_number}.csv"
+        self._delay_factor = delay_factor
 
         self.logger.info('{} initialised'.format(self))
 
@@ -371,7 +372,8 @@ class Camera(AbstractSDKCamera):
 
     def _poll_exposure(self, readout_args):
         """Override to include `self._polling_interval`."""
-        print(f"Polling camera with {self._polling_interval}s interval.")
+        print(f"Polling interval: {self._polling_interval}s.")
+        print(f"Delay factor: {self._delay_factor}")
         timer = CountdownTimer(duration=self._timeout)
         try:
             while self.is_exposing:
@@ -402,6 +404,7 @@ class Camera(AbstractSDKCamera):
         # Start the exposure series
         for exp_num in range(1, max_exposures+1):
             try:
+                print(f"Taking exposure {exp_num} of {max_exposures}.")
                 self.take_exposure(filename=self._temp_image_filename, seconds=exposure_time,
                                    blocking=True)
                 os.remove(self._temp_image_filename)
@@ -485,7 +488,8 @@ class Camera(AbstractSDKCamera):
             raise error.PanError("Error starting exposure on {}: {}".format(self, err))
 
         # Start polling thread that will call camera type specific _readout method when done
-        readout_thread = threading.Timer(interval=get_quantity_value(seconds, unit=u.second)*2,
+        interval = get_quantity_value(seconds, unit=u.second) * self._delay_factor
+        readout_thread = threading.Timer(interval=interval,
                                          function=self._poll_exposure,
                                          args=(readout_args,))
         readout_thread.start()
@@ -505,10 +509,13 @@ if __name__ == "__main__":
     parser.add_argument('--polling_interval', type=float, default=DEFAULT_POLLING_INTERVAL)
     parser.add_argument('--exposure_time', type=float, default=1)
     parser.add_argument('--wait', type=float, default=240)
+    parser.add_argument('--delay_factor', type=float, default=1)
     args = parser.parse_args()
     polling_interval = args.polling_interval
     exposure_time = args.exposure_time * u.second
+    delay_factor = args.delay_factor
     print(f"Polling interval: {polling_interval}s.")
+    print(f"Delay factor: {delay_factor}.")
     print(f"Exposure time: {exposure_time.value}s.")
 
     # serial_number = "3528420013090900"  # Pi8
@@ -516,6 +523,7 @@ if __name__ == "__main__":
     config = load_device_config()["camera"]
     config["polling_interval"] = polling_interval
     config["temperature_tolerance"] = 1.5 * u.Celsius
+    config["delay_factor"] = delay_factor
 
     # Create the camera
     camera = Camera(**config)
