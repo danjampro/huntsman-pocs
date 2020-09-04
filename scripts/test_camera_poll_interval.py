@@ -443,6 +443,10 @@ class Camera(AbstractSDKCamera):
         Returns:
             threading.Event: Event that will be set when exposure is complete.
         """
+        self._driver.close_camera(self._handle)
+        self._driver.open_camera(self._handle)
+        self._driver.init_camera(self._handle)
+
         assert self.is_connected, self.logger.error("Camera must be connected for take_exposure!")
 
         assert filename is not None, self.logger.error("Must pass filename for take_exposure")
