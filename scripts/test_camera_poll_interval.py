@@ -522,7 +522,7 @@ if __name__ == "__main__":
     # polling_interval = DEFAULT_POLLING_INTERVAL
     config = load_device_config()["camera"]
     config["polling_interval"] = polling_interval
-    config["temperature_tolerance"] = 1.5 * u.Celsius
+    config["temperature_tolerance"] = 2.0 * u.Celsius
     config["delay_factor"] = delay_factor
 
     # Create the camera
