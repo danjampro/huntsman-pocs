@@ -5,7 +5,7 @@ from huntsman.pocs.observatory import HuntsmanObservatory
 from huntsman.pocs.utils import load_config
 
 
-def take_flat_field(cam_name, filter_name, exposure_time, focus_position):
+def take_flat_field(cam_name, filter_name, exposure_time, focus_position, take_darks=False):
     """
     Take a single flat field exposure and an associated dark frame for a given camera.
     We use observatory methods to get consistent FITS headers.
@@ -38,6 +38,7 @@ def take_flat_field(cam_name, filter_name, exposure_time, focus_position):
     exptimes = {cam_name: exposure_time}
     observatory._take_flat_observation(exptimes, observation, fits_headers=fits_headers,
                                        dark=False)
-    camera.filterwheel.move_to("blank")
-    observatory._take_flat_observation(exptimes, observation, fits_headers=fits_headers,
-                                       dark=True)
+    if take_darks:
+        camera.filterwheel.move_to("blank")
+        observatory._take_flat_observation(exptimes, observation, fits_headers=fits_headers,
+                                           dark=True)
