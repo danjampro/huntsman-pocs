@@ -38,5 +38,6 @@ def take_flat_field(cam_name, filter_name, exposure_time, focus_position):
     exptimes = {cam_name: exposure_time}
     observatory._take_flat_observation(exptimes, observation, fits_headers=fits_headers,
                                        dark=False)
+    camera.filterwheel.move_to("blank")
     observatory._take_flat_observation(exptimes, observation, fits_headers=fits_headers,
                                        dark=True)
