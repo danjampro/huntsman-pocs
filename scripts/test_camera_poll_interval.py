@@ -22,6 +22,9 @@ from pocs.utils.images import fits as fits_utils
 from huntsman.pocs.utils.config import load_device_config
 
 
+DEFAULT_POLLING_INTERVAL = 0.01
+
+
 class Camera(AbstractSDKCamera):
 
     _driver = None  # Class variable to store the ASI driver interface
@@ -494,8 +497,6 @@ class Camera(AbstractSDKCamera):
 
 
 if __name__ == "__main__":
-
-    DEFAULT_POLLING_INTERVAL = 0.01
 
     # Prepare command line args
     parser = argparse.ArgumentParser()
