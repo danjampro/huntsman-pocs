@@ -405,6 +405,8 @@ class Camera(AbstractSDKCamera):
         for exp_num in range(1, max_exposures+1):
             try:
                 print(f"Taking exposure {exp_num} of {max_exposures}.")
+                print(f"- Temperature: {self.temperature}")
+                print(f"- Cooling power: {self.cooling_power}")
                 self.take_exposure(filename=self._temp_image_filename, seconds=exposure_time,
                                    blocking=True)
                 os.remove(self._temp_image_filename)
