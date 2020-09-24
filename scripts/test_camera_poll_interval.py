@@ -21,8 +21,6 @@ from pocs.utils import get_quantity_value
 from pocs.utils.images import fits as fits_utils
 from huntsman.pocs.utils.config import load_device_config
 
-DEFAULT_POLLING_INTERVAL = 0.01
-
 
 class Camera(AbstractSDKCamera):
 
@@ -392,7 +390,7 @@ class Camera(AbstractSDKCamera):
         finally:
             self._exposure_event.set()  # Make sure this gets set regardless of readout errors
 
-    def take_exposure_series(self, max_exposures=1000, exposure_time=1*u.second,
+    def take_exposure_series(self, max_exposures=2000, exposure_time=1*u.second,
                              filter_name="blank"):
         """
         Take a series of blocking exposues on the camera, each time deleting the resulting file. Do
@@ -410,6 +408,7 @@ class Camera(AbstractSDKCamera):
                 print(f"- Cooling power: {self.cooling_power}")
                 self.take_exposure(filename=self._temp_image_filename, seconds=exposure_time,
                                    blocking=True)
+                print("- Removing file...")
                 os.remove(self._temp_image_filename)
             except (error.PanError, FileNotFoundError) as err:
                 self.logger.info(f"Error on {self} after {exp_num} exposures with polling"
@@ -495,6 +494,8 @@ class Camera(AbstractSDKCamera):
 
 
 if __name__ == "__main__":
+
+    DEFAULT_POLLING_INTERVAL = 0.01
 
     # Prepare command line args
     parser = argparse.ArgumentParser()
