@@ -502,6 +502,7 @@ if __name__ == "__main__":
     parser.add_argument('--exposure_time', type=float, default=1)
     parser.add_argument('--wait', type=float, default=240)
     parser.add_argument('--delay_factor', type=float, default=1)
+    parser.add_argument('--nofw', action="store_true")
     args = parser.parse_args()
     polling_interval = args.polling_interval
     exposure_time = args.exposure_time * u.second
@@ -517,6 +518,9 @@ if __name__ == "__main__":
     config["temperature_tolerance"] = 2.0 * u.Celsius
     config["delay_factor"] = delay_factor
 
+    if args.nofw:
+        del config["filterwheel"]
+
     # Create the camera
     camera = Camera(**config)
 
@@ -526,7 +530,8 @@ if __name__ == "__main__":
     time.sleep(args.wait)
 
     # Move to blank filter
-    camera.filterwheel.move_to("blank", blocking=True)
+    if not args.nofw:
+        camera.filterwheel.move_to("blank", blocking=True)
 
     # Take the exposure series
     print("Starting exposures.")
