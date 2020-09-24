@@ -7,6 +7,7 @@ import os
 import csv
 import time
 import threading
+import argparse
 from contextlib import suppress
 import numpy as np
 from astropy import units as u
@@ -495,14 +496,16 @@ class Camera(AbstractSDKCamera):
 
 if __name__ == "__main__":
 
-    import argparse
-
+    # Prepare command line args
     parser = argparse.ArgumentParser()
     parser.add_argument('--polling_interval', type=float, default=DEFAULT_POLLING_INTERVAL)
     parser.add_argument('--exposure_time', type=float, default=1)
     parser.add_argument('--wait', type=float, default=240)
     parser.add_argument('--delay_factor', type=float, default=1)
     parser.add_argument('--nofw', action="store_true")
+    parser.add_argument('--nocool', action="store_true")
+
+    # Parse command line args
     args = parser.parse_args()
     polling_interval = args.polling_interval
     exposure_time = args.exposure_time * u.second
@@ -511,13 +514,11 @@ if __name__ == "__main__":
     print(f"Delay factor: {delay_factor}.")
     print(f"Exposure time: {exposure_time.value}s.")
 
-    # serial_number = "3528420013090900"  # Pi8
-    # polling_interval = DEFAULT_POLLING_INTERVAL
+    # Prepare the camera config
     config = load_device_config()["camera"]
     config["polling_interval"] = polling_interval
     config["temperature_tolerance"] = 2.0 * u.Celsius
     config["delay_factor"] = delay_factor
-
     if args.nofw:
         print("Removing filterwheel from config.")
         del config["filterwheel"]
@@ -526,9 +527,13 @@ if __name__ == "__main__":
     camera = Camera(**config)
 
     # Enable cooling
-    camera.cooling_enabled = True
-    print("Waiting for camera cooling.")
-    time.sleep(args.wait)
+    if args.nocool:
+        print("Disabling camera cooling.")
+        camera.cooling_enabled = False
+    else:
+        print("Enabling and waiting for camera cooling...")
+        camera.cooling_enabled = True
+        time.sleep(args.wait)
 
     # Move to blank filter
     if not args.nofw:
