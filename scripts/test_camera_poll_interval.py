@@ -519,6 +519,7 @@ if __name__ == "__main__":
     config["delay_factor"] = delay_factor
 
     if args.nofw:
+        print("Removing filterwheel from config.")
         del config["filterwheel"]
 
     # Create the camera
