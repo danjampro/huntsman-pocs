@@ -374,11 +374,10 @@ class Camera(AbstractSDKCamera):
 
     def _poll_exposure(self, readout_args):
         """Override to include `self._polling_interval`."""
-        print(f"Polling interval: {self._polling_interval}s.")
-        print(f"Delay factor: {self._delay_factor}.")
         timer = CountdownTimer(duration=self._timeout)
         try:
             while self.is_exposing:
+                print(f"- Polling...")
                 if timer.expired():
                     msg = "Timeout waiting for exposure on {} to complete".format(self)
                     raise error.Timeout(msg)
@@ -472,6 +471,8 @@ class Camera(AbstractSDKCamera):
             msg = f"Attempt to take exposure on {self} while one already in progress."
             raise error.PanError(msg)
 
+        poll_delay = get_quantity_value(seconds, unit=u.second) * self._delay_factor
+
         # Clear event now to prevent any other exposures starting before this one is finished.
         self._exposure_event.clear()
 
@@ -483,8 +484,7 @@ class Camera(AbstractSDKCamera):
             raise error.PanError("Error starting exposure on {}: {}".format(self, err))
 
         # Start polling thread that will call camera type specific _readout method when done
-        interval = get_quantity_value(seconds, unit=u.second) * self._delay_factor
-        readout_thread = threading.Timer(interval=interval,
+        readout_thread = threading.Timer(interval=poll_delay,
                                          function=self._poll_exposure,
                                          args=(readout_args,))
         readout_thread.start()
