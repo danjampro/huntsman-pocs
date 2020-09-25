@@ -411,8 +411,8 @@ class Camera(AbstractSDKCamera):
 
                 if movefw:
                     print("- Moving FW.")
-                    self.filterwheel.move_to("g_band")
-                    self.filterwheel.move_to(filter_name)
+                    self.filterwheel.move_to("g_band", blocking=True)
+                    self.filterwheel.move_to(filter_name, blocking=True)
 
                 print("- Starting exposure.")
                 self.take_exposure(filename=self._temp_image_filename, seconds=exposure_time,
