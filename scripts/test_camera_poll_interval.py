@@ -8,6 +8,7 @@ import csv
 import time
 import threading
 import argparse
+from multiprocessing import Pool
 from contextlib import suppress
 import numpy as np
 from astropy import units as u
@@ -23,6 +24,12 @@ from huntsman.pocs.utils.config import load_device_config
 
 
 DEFAULT_POLLING_INTERVAL = 0.01
+
+
+def simulate_load(x):
+    while True:
+        data = np.random.normal(0, 1, (2000, 2000))
+        data = data * data
 
 
 class Camera(AbstractSDKCamera):
@@ -393,7 +400,7 @@ class Camera(AbstractSDKCamera):
             self._exposure_event.set()  # Make sure this gets set regardless of readout errors
 
     def take_exposure_series(self, max_exposures=2000, exposure_time=1*u.second,
-                             filter_name="blank", movefw=False):
+                             filter_name="blank", movefw=False, blocking=True):
         """
         Take a series of blocking exposues on the camera, each time deleting the resulting file. Do
         this max_exposures times, or until it breaks. Record the polling interval and final number
@@ -416,7 +423,7 @@ class Camera(AbstractSDKCamera):
 
                 print("- Starting exposure.")
                 self.take_exposure(filename=self._temp_image_filename, seconds=exposure_time,
-                                   blocking=True)
+                                   blocking=blocking)
                 print("- Removing file...")
                 os.remove(self._temp_image_filename)
             except (error.PanError, FileNotFoundError) as err:
@@ -514,6 +521,8 @@ if __name__ == "__main__":
     parser.add_argument('--nofw', action="store_true")
     parser.add_argument('--nocool', action="store_true")
     parser.add_argument('--movefw', action="store_true")
+    parser.add_argument('--simulate_load', action="store_true")
+    parser.add_argument('--non_blocking', action="store_true")
 
     # Parse command line args
     args = parser.parse_args()
@@ -521,6 +530,7 @@ if __name__ == "__main__":
     exposure_time = args.exposure_time * u.second
     delay_factor = args.delay_factor
     movefw = args.movefw
+    blocking = not args.non_blocking
     print(f"Polling interval: {polling_interval}s.")
     print(f"Delay factor: {delay_factor}.")
     print(f"Exposure time: {exposure_time.value}s.")
@@ -534,6 +544,8 @@ if __name__ == "__main__":
         print("Removing filterwheel from config.")
         del config["filterwheel"]
         movefw = False
+    if not blocking:
+        print("Using non-blocking exposures.")
 
     # Create the camera
     camera = Camera(**config)
@@ -551,6 +563,11 @@ if __name__ == "__main__":
     if not args.nofw:
         camera.filterwheel.move_to("blank", blocking=True)
 
+    if args.simulate_load:
+        with Pool(4) as pool:
+            pool.map_async(simulate_load, [_ for _ in range(4)])
+
     # Take the exposure series
     print("Starting exposures.")
-    n_exposures = camera.take_exposure_series(exposure_time=exposure_time, movefw=movefw)
+    n_exposures = camera.take_exposure_series(exposure_time=exposure_time, movefw=movefw,
+                                              blocking=blocking)

@@ -6,7 +6,7 @@ import numpy as np
 
 def func(x):
     while True:
-        data = np.random.normal(0, 1, (5500, 2500))
+        data = np.random.normal(0, 1, (2000, 2000))
         data = data * data
 
 
