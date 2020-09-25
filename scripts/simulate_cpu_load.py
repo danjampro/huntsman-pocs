@@ -6,7 +6,7 @@ import numpy as np
 
 def func(x):
     while True:
-        data = np.random.normal(0, 1, shape=(5500, 2500))
+        data = np.random.normal(0, 1, (5500, 2500))
         data = data * data
 
 
