@@ -174,7 +174,9 @@ class Camera(AbstractSDKCamera):
     @property
     def is_exposing(self):
         """ True if an exposure is currently under way, otherwise False """
-        return Camera._driver.get_exposure_status(self._handle) == "WORKING"
+        status = Camera._driver.get_exposure_status(self._handle) == "WORKING"
+        print(f"- is_exposing status: {status}")
+        return status
 
     # Methods
 
@@ -384,7 +386,6 @@ class Camera(AbstractSDKCamera):
         timer = CountdownTimer(duration=self._timeout)
         try:
             while self.is_exposing:
-                print(f"- Polling: {Camera._driver.get_exposure_status(self._handle)}")
                 if timer.expired():
                     msg = "Timeout waiting for exposure on {} to complete".format(self)
                     raise error.Timeout(msg)
