@@ -174,9 +174,9 @@ class Camera(AbstractSDKCamera):
     @property
     def is_exposing(self):
         """ True if an exposure is currently under way, otherwise False """
-        status = Camera._driver.get_exposure_status(self._handle) == "WORKING"
+        status = Camera._driver.get_exposure_status(self._handle)
         print(f"- is_exposing status: {status}")
-        return status
+        return status == "WORKING"
 
     # Methods
 
