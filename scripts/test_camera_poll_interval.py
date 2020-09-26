@@ -317,7 +317,7 @@ class Camera(AbstractSDKCamera):
                 raise error.PanError(f'Error getting image data from {self}: {err}')
             if exposure_status == "FAILED":
                 raise error.PanError(f'Exposure failed on {self}.')
-                
+
         elif exposure_status == 'IDLE':
             raise error.PanError("Exposure missing on {}".format(self))
         else:
