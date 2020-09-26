@@ -315,14 +315,13 @@ class Camera(AbstractSDKCamera):
                 print(f"- {image_data.shape} {image_data.mean()}")
             except Exception as err:
                 raise error.PanError(f'Error getting image data from {self}: {err}')
-        if exposure_status == "FAILED":
-            raise error.PanError(f'Exposure failed on {self}.')
-
         elif exposure_status == 'IDLE':
             raise error.PanError("Exposure missing on {}".format(self))
         else:
             raise error.PanError("Unexpected exposure status on {}: '{}'".format(
                 self, exposure_status))
+        if exposure_status == "FAILED":
+            raise error.PanError(f'Exposure failed on {self}.')  # Make sure we notice
 
     def _create_fits_header(self, seconds, dark):
         header = super()._create_fits_header(seconds, dark)
