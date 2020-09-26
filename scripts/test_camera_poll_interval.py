@@ -307,27 +307,14 @@ class Camera(AbstractSDKCamera):
 
     def _readout(self, filename, width, height, header):
         exposure_status = Camera._driver.get_exposure_status(self._handle)
-        if exposure_status == 'SUCCESS':
+        if exposure_status in ['SUCCESS', 'FAILED']:
             try:
-                image_data = Camera._driver.get_exposure_data(self._handle,
-                                                              width,
-                                                              height,
+                print(f"- Reading out image data ({exposure_status})...")
+                image_data = Camera._driver.get_exposure_data(self._handle, width, height,
                                                               self.image_type)
-            except RuntimeError as err:
-                raise error.PanError('Error getting image data from {}: {}'.format(self, err))
-            else:
-                # Fix 'raw' data scaling by changing from zero padding of LSBs
-                # to zero padding of MSBs.
-                if self.image_type == 'RAW16':
-                    pad_bits = 16 - int(get_quantity_value(self.bit_depth, u.bit))
-                    image_data = np.right_shift(image_data, pad_bits)
-
-                fits_utils.write_fits(image_data,
-                                      header,
-                                      filename,
-                                      self.logger)
-        elif exposure_status == 'FAILED':
-            raise error.PanError("Exposure failed on {}".format(self))
+                print(f"- {image_data.shape} {image_data.mean()}")
+            except Exception as err:
+                raise error.PanError(f'Error getting image data from {self}: {err}')
         elif exposure_status == 'IDLE':
             raise error.PanError("Exposure missing on {}".format(self))
         else:
@@ -425,8 +412,8 @@ class Camera(AbstractSDKCamera):
                 print("- Starting exposure.")
                 self.take_exposure(filename=self._temp_image_filename, seconds=exposure_time,
                                    blocking=blocking)
-                print("- Removing file...")
-                os.remove(self._temp_image_filename)
+                # print("- Removing file...")
+                # os.remove(self._temp_image_filename)  # File is not written
             except (error.PanError, FileNotFoundError) as err:
                 self.logger.info(f"Error on {self} after {exp_num} exposures with polling"
                                  f" interval={self._polling_interval}: {err}.")
