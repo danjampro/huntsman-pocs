@@ -305,14 +305,15 @@ class Camera(AbstractSDKCamera):
                         header)
         return readout_args
 
-    def _readout(self, filename, width, height, header, write_fits=True):
+    def _readout(self, filename, width, height, header, write_fits=True, check_image=False):
         exposure_status = Camera._driver.get_exposure_status(self._handle)
         if exposure_status in ['SUCCESS', 'FAILED']:
             try:
                 print(f"- Reading out image data ({exposure_status})...")
                 image_data = Camera._driver.get_exposure_data(self._handle, width, height,
                                                               self.image_type)
-                print(f"- {image_data.shape} {image_data.mean()}")
+                if check_image:
+                    print(f"- {image_data.shape} {image_data.mean()}")
                 if write_fits:
                     print("- Writing to FITS file.")
                     if self.image_type == 'RAW16':
