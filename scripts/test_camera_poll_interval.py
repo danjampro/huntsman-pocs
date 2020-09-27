@@ -305,7 +305,7 @@ class Camera(AbstractSDKCamera):
                         header)
         return readout_args
 
-    def _readout(self, filename, width, height, header):
+    def _readout(self, filename, width, height, header, write_fits=True):
         exposure_status = Camera._driver.get_exposure_status(self._handle)
         if exposure_status in ['SUCCESS', 'FAILED']:
             try:
@@ -313,6 +313,12 @@ class Camera(AbstractSDKCamera):
                 image_data = Camera._driver.get_exposure_data(self._handle, width, height,
                                                               self.image_type)
                 print(f"- {image_data.shape} {image_data.mean()}")
+                if write_fits:
+                    print("- Writing to FITS file.")
+                    if self.image_type == 'RAW16':
+                        pad_bits = 16 - int(get_quantity_value(self.bit_depth, u.bit))
+                        image_data = np.right_shift(image_data, pad_bits)
+                        fits_utils.write_fits(image_data, header, filename, self.logger)
             except Exception as err:
                 raise error.PanError(f'Error getting image data from {self}: {err}')
         elif exposure_status == 'IDLE':
@@ -370,7 +376,7 @@ class Camera(AbstractSDKCamera):
 
         Camera._driver.set_control_value(self._handle, control_type, value)
 
-    def _poll_exposure(self, readout_args):
+    def _poll_exposure(self, readout_args, **kwargs):
         """Override to include `self._polling_interval`."""
         timer = CountdownTimer(duration=self._timeout)
         try:
@@ -385,12 +391,12 @@ class Camera(AbstractSDKCamera):
             raise err
         else:
             # Camera type specific readout function
-            self._readout(*readout_args)
+            self._readout(*readout_args, **kwargs)
         finally:
             self._exposure_event.set()  # Make sure this gets set regardless of readout errors
 
     def take_exposure_series(self, max_exposures=2000, exposure_time=1*u.second,
-                             filter_name="blank", movefw=False, blocking=True):
+                             filter_name="blank", movefw=False, blocking=True, write_fits=True):
         """
         Take a series of blocking exposues on the camera, each time deleting the resulting file. Do
         this max_exposures times, or until it breaks. Record the polling interval and final number
@@ -413,9 +419,10 @@ class Camera(AbstractSDKCamera):
 
                 print("- Starting exposure.")
                 self.take_exposure(filename=self._temp_image_filename, seconds=exposure_time,
-                                   blocking=blocking)
-                # print("- Removing file...")
-                # os.remove(self._temp_image_filename)  # File is not written
+                                   blocking=blocking, write_fits=write_fits)
+                if write_fits:
+                    print("- Removing FITS file...")
+                    os.remove(self._temp_image_filename)  # File is not written
             except (error.PanError, FileNotFoundError) as err:
                 self.logger.info(f"Error on {self} after {exp_num} exposures with polling"
                                  f" interval={self._polling_interval}: {err}.")
@@ -434,6 +441,7 @@ class Camera(AbstractSDKCamera):
                       filename=None,
                       dark=False,
                       blocking=False,
+                      write_fits=True,
                       *args,
                       **kwargs):
         """Take an exposure for given number of seconds and saves to provided filename.
@@ -488,9 +496,10 @@ class Camera(AbstractSDKCamera):
             raise error.PanError("Error starting exposure on {}: {}".format(self, err))
 
         # Start polling thread that will call camera type specific _readout method when done
+        readout_kwargs = dict(write_fits=write_fits)
         readout_thread = threading.Timer(interval=poll_delay,
                                          function=self._poll_exposure,
-                                         args=(readout_args,))
+                                         args=(readout_args,), kwargs=readout_kwargs)
         readout_thread.start()
 
         if blocking:
@@ -513,6 +522,7 @@ if __name__ == "__main__":
     parser.add_argument('--movefw', action="store_true")
     parser.add_argument('--simulate_load', action="store_true")
     parser.add_argument('--non_blocking', action="store_true")
+    parser.add_argument('--no_write', action="store_true")
 
     # Parse command line args
     args = parser.parse_args()
@@ -521,6 +531,7 @@ if __name__ == "__main__":
     delay_factor = args.delay_factor
     movefw = args.movefw
     blocking = not args.non_blocking
+    write_fits = not args.no_write
     print(f"Polling interval: {polling_interval}s.")
     print(f"Delay factor: {delay_factor}.")
     print(f"Exposure time: {exposure_time.value}s.")
@@ -560,4 +571,4 @@ if __name__ == "__main__":
     # Take the exposure series
     print("Starting exposures.")
     n_exposures = camera.take_exposure_series(exposure_time=exposure_time, movefw=movefw,
-                                              blocking=blocking)
+                                              blocking=blocking, write_fits=write_fits)
