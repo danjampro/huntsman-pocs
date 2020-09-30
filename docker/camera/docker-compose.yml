@@ -1,11 +1,11 @@
 version: '3'
 services:
   arm_device:
-    image: huntsmanarray/arm_device:tenlens
+    image: huntsmanarray/arm_device:zwo_testing
     build:
       context: ../arm_device
   camera:
-    image: huntsmanarray/camera:tenlens
+    image: huntsmanarray/camera:zwo_testing
     build:
       context: .
     user: huntsman

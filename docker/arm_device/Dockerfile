@@ -38,6 +38,7 @@ RUN wget $CONDA_URL && \
     ./$CONDA_SCRIPT -b -p $CONDA_PATH
 
 USER root
+COPY /home/daniel/projects/huntsman/pocs_old/POCS ${PANDIR}/pocs
 RUN ln -s $CONDA_PATH/bin/conda /usr/local/bin/ && \
     ln -s $CONDA_PATH/bin/python3.6 /usr/local/bin/python && \
     ln -s $CONDA_PATH/bin/pip /usr/local/bin/ && \
@@ -49,11 +50,8 @@ RUN ln -s $CONDA_PATH/bin/conda /usr/local/bin/ && \
     # Install huntsman-pocs
     mkdir -p $PANDIR/logs && \
     cd $PANDIR && \
-    git clone https://github.com/panoptes/POCS.git && \
     git clone https://github.com/AstroHuntsman/huntsman-pocs.git && \
     cd $POCS && \
-    # Checkout old POCS version
-    git checkout 57a9938008b280e82d844456c4843b1e258e2c6b && \
     python setup.py develop --no-deps && \
     cd $HUNTSMAN_POCS && \
     python setup.py develop && \
