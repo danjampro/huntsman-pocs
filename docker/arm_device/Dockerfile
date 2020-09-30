@@ -51,7 +51,10 @@ RUN ln -s $CONDA_PATH/bin/conda /usr/local/bin/ && \
     mkdir -p $PANDIR/logs && \
     cd $PANDIR && \
     git clone https://github.com/AstroHuntsman/huntsman-pocs.git && \
+    git clone https://github.com/danjampro/POCS && \
     cd $POCS && \
+    git fetch origin old_pocs_zwo_testing
+    git checkout -t origin/old_pocs_zwo_testing
     python setup.py develop --no-deps && \
     cd $HUNTSMAN_POCS && \
     python setup.py develop && \
