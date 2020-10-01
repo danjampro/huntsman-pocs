@@ -41,7 +41,7 @@ def prepare_cameras(cameras):
     for camera in cameras.values():
         camera.cooling_enabled = True
         camera.filterwheel.move_to("blank", blocking=False)
-    while not all([c.is_ready() for c in cameras.values()]):
+    while not all([c.is_ready for c in cameras.values()]):
         print("Waiting for cameras...")
         time.sleep(5)
 
