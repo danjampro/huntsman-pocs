@@ -5,6 +5,7 @@
 FROM huntsmanarray/arm_device:zwo_testing
 
 # ZWO camera & EFW libraries
+<<<<<<< HEAD
 RUN export BUILD_DIR=$(pwd)/ASIBuild && \
     mkdir $BUILD_DIR && \
     # ZWO camera
@@ -34,3 +35,6 @@ RUN export BUILD_DIR=$(pwd)/ASIBuild && \
     # Clean up
     rm -rf $BUILD_DIR && \
     ldconfig
+=======
+RUN ${HUNTSMAN_POCS}/scripts/install_asi_libs.sh
+>>>>>>> 7b84fdd29b74a22cebe7aa57e9bef86bccf51ab7
