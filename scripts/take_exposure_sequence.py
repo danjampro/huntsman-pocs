@@ -13,8 +13,8 @@ def take_exposure(cameras, config, exptime=15, max_wait=30):
     """
     Take a blocking exposure on all the cameras.
     """
-    # output_dir = os.path.join(config["directories"]["images"], "zwo_testing")
-    output_dir = "/home/huntsman/zwo_testing"  # Don't write over network as it takes too long
+    output_dir = os.path.join(config["directories"]["images"], "zwo_testing")
+    # output_dir = "/home/huntsman/zwo_testing"  # Don't write over network as it takes too long
     with suppress(FileExistsError):
         os.mkdir(output_dir)
     events = []
@@ -55,10 +55,12 @@ def prepare_cameras(cameras):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('--exposure_time', default=1)
+    parser.add_argument('--exposure_time', default=10)
+    parser.add_argument('--sleep', default=5)
 
     args = parser.parse_args()
     exposure_time = float(args.exposure_time)
+    sleep_time = float(args.sleep)
 
     config = load_config()
 
@@ -69,3 +71,4 @@ if __name__ == "__main__":
     # Start the exposure sequence
     while True:
         take_exposure(cameras, config, exptime=exposure_time)
+        time.sleep(sleep_time)
