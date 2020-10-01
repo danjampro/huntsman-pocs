@@ -31,7 +31,7 @@ def take_exposure(cameras, config, exptime=15, max_wait=30):
     while not all([e.is_set() for e in events]):
         print("Waiting for exposures...")
         if timer > exptime + max_wait:
-            break
+            raise RuntimeError("Timeout!")
         timer += 1
         time.sleep(1)
     # Clean-up files
