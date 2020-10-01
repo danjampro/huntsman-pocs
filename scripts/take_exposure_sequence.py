@@ -34,7 +34,7 @@ def take_exposure(cameras, config, exptime=1, max_wait=30):
             os.remove(filename)
 
 
-def prepare_cameras():
+def prepare_cameras(cameras):
     """
     Cool cameras and prepare FWs.
     """
