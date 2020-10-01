@@ -65,4 +65,4 @@ if __name__ == "__main__":
 
     # Start the exposure sequence
     while True:
-        take_exposure(cameras, config, exposure_time=exposure_time)
+        take_exposure(cameras, config, exptime=exposure_time)
