@@ -38,7 +38,6 @@ RUN wget $CONDA_URL && \
     ./$CONDA_SCRIPT -b -p $CONDA_PATH
 
 USER root
-COPY /home/daniel/projects/huntsman/pocs_old/POCS ${PANDIR}/pocs
 RUN ln -s $CONDA_PATH/bin/conda /usr/local/bin/ && \
     ln -s $CONDA_PATH/bin/python3.6 /usr/local/bin/python && \
     ln -s $CONDA_PATH/bin/pip /usr/local/bin/ && \
@@ -53,8 +52,8 @@ RUN ln -s $CONDA_PATH/bin/conda /usr/local/bin/ && \
     git clone https://github.com/AstroHuntsman/huntsman-pocs.git && \
     git clone https://github.com/danjampro/POCS && \
     cd $POCS && \
-    git fetch origin old_pocs_zwo_testing
-    git checkout -t origin/old_pocs_zwo_testing
+    git fetch origin old_pocs_zwo_testing && \
+    git checkout -t origin/old_pocs_zwo_testing && \
     python setup.py develop --no-deps && \
     cd $HUNTSMAN_POCS && \
     python setup.py develop && \

@@ -15,7 +15,7 @@ RUN export BUILD_DIR=$(pwd)/ASIBuild && \
     export TARGET=ASI_linux_mac_SDK_V1.15.0915.tar.bz2 && \
     wget https://astronomy-imaging-camera.com/software/$TARGET && \
     tar xvjf $TARGET && \
-    cd lib && \
+    cd ASI_linux_mac_SDK_V1.15.0915/lib && \
     cp armv7/libASICamera2.so /usr/local/lib/ && \
     chmod a+rx /usr/local/lib/libASICamera2.so && \
     install asi.rules /etc/udev/rules.d && \
