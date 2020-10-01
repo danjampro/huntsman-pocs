@@ -3,6 +3,7 @@ Simple script to connect to cameras and use them to take exposures.
 """
 import os
 import time
+import argparse
 from contextlib import suppress
 from huntsman.pocs.utils import load_config
 from huntsman.pocs.camera import create_cameras_from_config
@@ -50,6 +51,12 @@ def prepare_cameras(cameras):
 
 if __name__ == "__main__":
 
+    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('--exposure_time', default=1)
+
+    args = parser.parse_args()
+    exposure_time = args.exposure_time
+
     config = load_config()
 
     # Create the cameras
@@ -58,4 +65,4 @@ if __name__ == "__main__":
 
     # Start the exposure sequence
     while True:
-        take_exposure(cameras, config)
+        take_exposure(cameras, config, exposure_time=exposure_time)
