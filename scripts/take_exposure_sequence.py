@@ -58,7 +58,7 @@ if __name__ == "__main__":
     parser.add_argument('--exposure_time', default=1)
 
     args = parser.parse_args()
-    exposure_time = args.exposure_time
+    exposure_time = float(args.exposure_time)
 
     config = load_config()
 
