@@ -8,7 +8,7 @@ from huntsman.pocs.utils import load_config
 from huntsman.pocs.camera import create_cameras_from_config
 
 
-def take_exposure(cameras, config, exptime=1, max_wait=30):
+def take_exposure(cameras, config, exptime=15, max_wait=30):
     """
     Take a blocking exposure on all the cameras.
     """
@@ -19,6 +19,8 @@ def take_exposure(cameras, config, exptime=1, max_wait=30):
     for i, camera in enumerate(cameras.values()):
         filename = os.path.join(output_dir, f"test_{i}.fits")
         filenames.append(filename)
+        with suppress(FileNotFoundError):
+            os.remove(filename)
         events.append(camera.take_exposure(filename=filename, seconds=exptime, blocking=False))
     # Wait for exposures
     timer = 0
