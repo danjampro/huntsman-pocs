@@ -13,7 +13,9 @@ def take_exposure(cameras, config, exptime=15, max_wait=30):
     """
     Take a blocking exposure on all the cameras.
     """
-    output_dir = os.path.join(config["directories"]["images"], "zwo_testing")
+    # output_dir = os.path.join(config["directories"]["images"], "zwo_testing")
+    output_dir = "/home/huntsman/zwo_testing"  # Don't write over network as it takes too long
+    os.mkdir(output_dir, exist_ok=True)
     events = []
     filenames = []
     # Start for the exposures
