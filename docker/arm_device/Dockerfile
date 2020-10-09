@@ -50,12 +50,15 @@ RUN ln -s $CONDA_PATH/bin/conda /usr/local/bin/ && \
     mkdir -p $PANDIR/logs && \
     cd $PANDIR && \
     git clone https://github.com/danjampro/POCS.git && \
-    git clone https://github.com/AstroHuntsman/huntsman-pocs.git && \
     cd $POCS && \
-    git fetch origin interim
-    git checkout -t origin/interim
-    python setup.py develop --no-deps && \
-    cd $HUNTSMAN_POCS && \
+    git fetch origin interim && \
+    git checkout -t origin/interim && \
+    python setup.py develop --no-deps
+
+RUN git clone https://github.com/danjampro/huntsman-pocs.git && \
+    cd ${HUNTSMAN_POCS} && \
+    git fetch origin interim && \
+    git checkout -t origin/interim && \
     python setup.py develop && \
     # Setup permissions for PANUSER
     chmod 1777 /tmp && \
