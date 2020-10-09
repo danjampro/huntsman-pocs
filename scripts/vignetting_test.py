@@ -126,7 +126,6 @@ class ExposureSequence():
             raise(err)
         finally:
             # Finish up
-            print("Parking mount...")
             self._park_mount()
 
     def _take_exposure_sequence(self):
@@ -170,6 +169,7 @@ class ExposureSequence():
         """Slew to the field, moving FWs to blank beforehand."""
         print(f"Moving filterwheels to blank position before slewing...")
         self._move_fws(filter_name="blank")
+        print("Slewing to target...")
         self.mount.set_target_coordinates(field)
         self.mount.slew_to_target()
 
@@ -177,6 +177,7 @@ class ExposureSequence():
         """Park mount after moving FWs to blank positions"""
         print(f"Moving filterwheels to blank position before parking...")
         self._move_fws(filter_name="blank")
+        print("Parking mount...")
         self.mount.park()
 
     def _make_observation(self, alt, az):

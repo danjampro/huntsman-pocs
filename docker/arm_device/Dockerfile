@@ -49,9 +49,11 @@ RUN ln -s $CONDA_PATH/bin/conda /usr/local/bin/ && \
     # Install huntsman-pocs
     mkdir -p $PANDIR/logs && \
     cd $PANDIR && \
-    git clone https://github.com/panoptes/POCS.git && \
+    git clone https://github.com/danjampro/POCS.git && \
     git clone https://github.com/AstroHuntsman/huntsman-pocs.git && \
     cd $POCS && \
+    git fetch origin interim
+    git checkout -t origin/interim
     python setup.py develop --no-deps && \
     cd $HUNTSMAN_POCS && \
     python setup.py develop && \
