@@ -5,6 +5,9 @@ services:
     build:
       context: ${HUNTSMAN_POCS}
       dockerfile: docker/arm_device/Dockerfile
+      args:
+        pocs_branch: interim
+        pocs_url: https://github.com/danjampro/POCS.git
   camera:
     image: huntsmanarray/camera:interim
     build:
