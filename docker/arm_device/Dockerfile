@@ -6,21 +6,20 @@
 FROM raspbian/jessie:latest
 
 # Build args
-ARG panuser = huntsman
-ARG pocs_branch = develop
-ARG pocs_url = https://github.com/panoptes/POCS.git
-ARG conda_path = /home/${panuser}/berryconda3
-ARG conda_script = Berryconda3-2.0.0-Linux-armv7l.sh
-ARG conda_url = https://github.com/jjhelmus/berryconda/releases/download/v2.0.0/${conda_script}
+ARG panuser=huntsman
+ARG pocs_branch=develop
+ARG pocs_url=https://github.com/panoptes/POCS.git
+ARG conda_path=/home/${panuser}/berryconda3
+ARG conda_script=Berryconda3-2.0.0-Linux-armv7l.sh
+ARG conda_url=https://github.com/jjhelmus/berryconda/releases/download/v2.0.0/${conda_script}
 
 # Environment variables
-ENV PANUSER=huntsman
+ENV PANUSER=${panuser}
 ENV PANDIR=/var/${PANUSER}
 ENV DEBIAN_FRONTEND=noninteractive
 ENV POCS=${PANDIR}/POCS
 ENV PAWS=${PANDIR}/PAWS
 ENV HUNTSMAN_POCS=${PANDIR}/huntsman-pocs
-ENV PANUSER=${panuser}
 
 # Add the huntsman user
 RUN useradd -m -d /home/$PANUSER $PANUSER && \
