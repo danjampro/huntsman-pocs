@@ -1,9 +1,15 @@
 version: '3'
 services:
-  camera:
-    image: huntsmanarray/camera:latest
+  arm_device:
+    image: huntsmanarray/arm_device:interim
     build:
-      context: "${HUNTSMAN_POCS}/docker/camera"
+      context: ${HUNTSMAN_POCS}
+      dockerfile: docker/arm_device/Dockerfile
+  camera:
+    image: huntsmanarray/camera:interim
+    build:
+      context: ${HUNTSMAN_POCS}
+      dockerfile: docker/camera/Dockerfile
     user: huntsman
     privileged: true
     network_mode: host
@@ -11,4 +17,5 @@ services:
     tty: true
     volumes:
       - "~/.ssh:/home/huntsman/.ssh"
-      - "$PANDIR/logs:/var/huntsman/logs"
+      - "${PANDIR}/logs:/var/huntsman/logs"
+      - "${HUNTSMAN_POCS}:/var/huntsman/huntsman-pocs"

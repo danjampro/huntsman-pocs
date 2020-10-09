@@ -15,6 +15,7 @@ ENV CONDA_PATH=/home/$PANUSER/berryconda3
 ENV POCS=${PANDIR}/POCS
 ENV PAWS=${PANDIR}/PAWS
 ENV HUNTSMAN_POCS=${PANDIR}/huntsman-pocs
+ENV BRANCH_NAME=interim
 
 # Add the huntsman user
 RUN useradd -m -d /home/$PANUSER $PANUSER && \
@@ -26,7 +27,7 @@ RUN useradd -m -d /home/$PANUSER $PANUSER && \
     apt-get -y upgrade && \
     apt-get update && \
     apt-get -y dist-upgrade && \
-    apt-get -y install bzip2 git gcc sshfs sudo && \
+    apt-get -y install bzip2 git gcc sshfs sudo vim && \
     # Allow sudo without password
     echo "$PANUSER ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
@@ -45,21 +46,15 @@ RUN ln -s $CONDA_PATH/bin/conda /usr/local/bin/ && \
     pip install --upgrade pip && \
     pip install setuptools --upgrade && \
     conda install astropy matplotlib requests scipy && \
-    pip install netifaces pyro4 pyyaml pyserial && \
-    # Install huntsman-pocs
+    pip install netifaces pyro4 pyyaml pyserial pymongo && \
+    # Install POCS
     mkdir -p $PANDIR/logs && \
     cd $PANDIR && \
     git clone https://github.com/danjampro/POCS.git && \
     cd $POCS && \
-    git fetch origin interim && \
-    git checkout -t origin/interim && \
-    python setup.py develop --no-deps
-
-RUN git clone https://github.com/danjampro/huntsman-pocs.git && \
-    cd ${HUNTSMAN_POCS} && \
-    git fetch origin interim && \
-    git checkout -t origin/interim && \
-    python setup.py develop && \
+    git fetch origin ${BRANCH_NAME} && \
+    git checkout -t origin/${BRANCH_NAME} && \
+    python setup.py develop --no-deps && \
     # Setup permissions for PANUSER
     chmod 1777 /tmp && \
     chown -R $PANUSER $PANDIR && \

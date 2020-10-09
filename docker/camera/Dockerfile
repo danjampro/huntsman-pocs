@@ -5,4 +5,5 @@
 FROM huntsmanarray/arm_device:interim
 
 # ZWO camera & EFW libraries
-RUN ${HUNTSMAN_POCS}/scripts/install_asi_libs.sh
+ADD scripts/install_asi_libs.sh .
+RUN ./install_asi_libs.sh
