@@ -7,7 +7,7 @@ BUILD_DIR=${1:-./ASIBuild}
 
 # Current lib versions.
 CAM_LIB_VERSION=1.15.0617
-EFW_LIB_VERSION=1.5.0615
+EFW_LIB_VERSION=0.4.1022
 # Get the arch -> x86_64 == x86
 ARCH=armv7
 
