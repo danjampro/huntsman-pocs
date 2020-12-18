@@ -1,7 +1,7 @@
 version: '3'
 services:
   python_tests:
-    image: huntsmanarray/huntsman-pocs:develop
+    image: huntsmanarray/huntsman-pocs:commissioning
     build:
       context: "${HUNTSMAN_POCS}"
       dockerfile: docker/Dockerfile

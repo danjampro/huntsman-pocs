@@ -2,7 +2,7 @@ name: Docker CI
 on:
   push:
     branches:
-      - develop
+      - commissioning
 jobs:
   buildx:
     runs-on: ubuntu-latest
@@ -22,7 +22,7 @@ jobs:
           docker buildx build \
             -f docker/Dockerfile \
             --platform linux/arm64,linux/amd64 \
-            --tag huntsmanarray/huntsman-pocs:develop \
+            --tag huntsmanarray/huntsman-pocs:commissioning \
             --output "type=image,push=true" .
       - name: Build and push huntsman-pocs-camera image.
         run: |
